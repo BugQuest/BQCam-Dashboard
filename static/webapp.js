@@ -5,6 +5,7 @@ class SensorDashboard {
         this.token = token;
         this.apiBase = apiBase;
         this.latestTimestamp = null;
+        this.intervals = [];
 
         this.chart = new Chart(this.ctx, {
             type: 'line',
@@ -121,6 +122,8 @@ class SensorDashboard {
         } catch (err) {
             console.error("Erreur de récupération des données :", err);
         }
+
+        this.startCircularProgress("#progress-sensor .circle", 60000); // for sensor update
     }
 
     async fetchSystemStatus() {
@@ -162,16 +165,16 @@ Uptime: ${uptimeStr}
             document.getElementById("system-status").textContent = "Failed to retrieve system status.";
             console.error("fetchSystemStatus:", err);
         }
+
+        this.startCircularProgress("#progress-system .circle", 10000); // for system status
     }
 
     start() {
         this.fetchHistory().then(() => {
-            this.startCircularProgress("#progress-sensor .circle", 60000); // for sensor update
             this.fetchAndUpdate();
             this.timer = setInterval(() => this.fetchAndUpdate(), 60000);
         });
 
-        this.startCircularProgress("#progress-system .circle", 10000); // for system status
         this.fetchSystemStatus();
         setInterval(() => this.fetchSystemStatus(), 10000);
     }
@@ -199,6 +202,10 @@ Uptime: ${uptimeStr}
     }
 
     startCircularProgress(selector, intervalMs) {
+
+        if (this.intervals[selector])
+            clearInterval(this.intervals[selector]);
+
         const circle = document.querySelector(selector);
         if (!circle) return;
 
@@ -207,7 +214,7 @@ Uptime: ${uptimeStr}
 
         const fullLength = 100;
 
-        setInterval(() => {
+        this.intervals[selector] = setInterval(() => {
             current = (current + 0.1) % total;
             const percent = (current / total) * fullLength;
             circle.setAttribute("stroke-dasharray", `${fullLength}, ${fullLength}`);
