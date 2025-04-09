@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from models.sensor import SensorData, SensorSummary, SystemHealth
+from typing import List
 import sqlite3
 from typing import Optional
 from datetime import datetime
@@ -98,7 +100,7 @@ def get_db_connection():
     return sqlite3.connect("sensor_data.db")
 
 
-@app.get("/latest", dependencies=[Depends(check_token)])
+@app.get("/latest", response_model=SensorData, dependencies=[Depends(check_token)])
 def get_latest():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -116,7 +118,7 @@ def get_latest():
         raise HTTPException(status_code=404, detail="No data found")
 
 
-@app.get("/history", dependencies=[Depends(check_token)])
+@app.get("/history", response_model=List[SensorData], dependencies=[Depends(check_token)])
 def get_history(limit: int = 10):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -130,7 +132,7 @@ def get_history(limit: int = 10):
     ]
 
 
-@app.get("/range", dependencies=[Depends(check_token)])
+@app.get("/range", response_model=List[SensorData], dependencies=[Depends(check_token)])
 def get_range(start: str, end: str):
     try:
         datetime.strptime(start, "%Y-%m-%d")
@@ -154,7 +156,7 @@ def get_range(start: str, end: str):
     ]
 
 
-@app.get("/summary", dependencies=[Depends(check_token)])
+@app.get("/summary", response_model=SensorSummary, dependencies=[Depends(check_token)])
 def get_summary(start: str, end: str):
     try:
         datetime.strptime(start, "%Y-%m-%d")
@@ -188,7 +190,7 @@ def get_summary(start: str, end: str):
     }
 
 
-@app.get("/health", dependencies=[Depends(check_token)])
+@app.get("/health", response_model=SystemHealth, dependencies=[Depends(check_token)])
 def health_check():
     try:
         # Disk
