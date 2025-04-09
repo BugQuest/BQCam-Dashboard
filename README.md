@@ -13,6 +13,7 @@ system health, and camera streaming — built specifically for Raspberry Pi Zero
 ```
 bqcam-dashboard/
 ├── .env                   # Environment config (API keys, ports, URLs)
+├── logger.py             # Custom logger (console + file)
 ├── api.py                # FastAPI REST API (sensor + system health)
 ├── webapp.py             # FastAPI-powered dashboard (serves UI)
 ├── sensor_data.db        # SQLite database (auto-generated)
@@ -108,6 +109,39 @@ Change paths and permissions accordingly to your setup.
 
 > example: sudo nano /etc/systemd/system/bqcam-api.service
 
+#### bqcam-logger.service
+
+```
+[Unit]
+Description=BQCam Sensor Logger (BMP280)
+After=network.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/BQCam-Dashboard
+Environment="PATH=/home/pi/BQCam-Dashboard/venv/bin"
+EnvironmentFile=/home/pi/BQCam-Dashboard/.env
+ExecStart=/home/pi/BQCam-Dashboard/venv/bin/python3 /home/pi/BQCam-Dashboard/logger.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+#### bqcam-logger.timer
+```
+[Unit]
+Description=Run BQCam Sensor Logger every 5 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+Unit=bmp280-bqcam-logger.service
+
+[Install]
+WantedBy=timers.target
+```
+
 #### bqcam-api.service
 
 ```
@@ -150,8 +184,8 @@ Then:
 
 ```shell
 sudo systemctl daemon-reload  
-sudo systemctl enable bqcam-api bqcam-web  
-sudo systemctl start bqcam-api bqcam-web
+sudo systemctl enable bqcam-api bqcam-web bqcam-logger.timer 
+sudo systemctl start bqcam-api bqcam-web bgcam-logger.timer
 ```
 
 ---
