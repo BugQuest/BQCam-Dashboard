@@ -3,6 +3,9 @@
 BQCam is a lightweight, FastAPI-powered dashboard for real-time monitoring of a BMP280 sensor (temperature & pressure),
 system health, and camera streaming — built specifically for Raspberry Pi Zero 2 W.
 
+
+![BQCam Dashboard Preview](dashboard-preview.png)
+
 ---
 
 ## 📦 Project Structure
