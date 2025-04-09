@@ -1,0 +1,26 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtualenv
+venv/
+
+# dotenv config
+.env
+
+# SQLite database
+sensor_data.db
+
+# Logs
+*.log
+*.err
+
+# systemd backups or temp files
+*.service~
+
+# OS files
+.DS_Store
+Thumbs.db

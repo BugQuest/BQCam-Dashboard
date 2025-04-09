@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BQCam03 Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+<div class="container">
+    <h1>- Dashboard -</h1>
+    <h4>BQCam - <span id="latest-values">...</span></h4>
+
+
+    <div class="section section-full">
+        <h2>
+            Live Temperature & Pressure Graph
+            <span class="refresh-indicator-container">
+                <svg id="progress-sensor" class="refresh-indicator" viewBox="0 0 36 36">
+                      <path class="circle-bg"
+                            d="M18 2.0845 a 15.9155 15.9155 0 1 1 0 31.831 a 15.9155 15.9155 0 1 1 0 -31.831"/>
+                      <path class="circle" stroke-dasharray="0, 100"
+                            d="M18 2.0845
+         a 15.9155 15.9155 0 0 1 0 31.831
+         a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                </svg>
+            </span>
+        </h2>
+        <canvas id="combinedChart"></canvas>
+    </div>
+
+    <div class="section" id="cam-section">
+        <div class="wrapper">
+            <h2>Flux Vidéo (Caméra WebRTC)</h2>
+            <iframe src="{{ CAM_URL }}" allowfullscreen></iframe>
+            <div class="cam-controls">
+                <button id="grow-cam-btn" title="Grow"><sup>⇱</sup><sub>⇲</sub></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" id="system-section">
+        <h2>
+            System Status
+            <span class="refresh-indicator-container">
+                <svg id="progress-system" class="refresh-indicator" viewBox="0 0 36 36">
+                      <path class="circle-bg"
+                            d="M18 2.0845 a 15.9155 15.9155 0 1 1 0 31.831 a 15.9155 15.9155 0 1 1 0 -31.831"/>
+                      <path class="circle" stroke-dasharray="0, 100"
+                            d="M18 2.0845
+         a 15.9155 15.9155 0 0 1 0 31.831
+         a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                </svg>
+            </span>
+        </h2>
+        <pre id="system-status">Loading...</pre>
+    </div>
+
+    <div class="section">
+        <h2>Data Log</h2>
+        <div class="log" id="dataLog"></div>
+    </div>
+</div>
+<script>
+    const API_TOKEN = "{{ API_TOKEN }}";
+    const API_URL = "{{ API_URL }}";
+</script>
+<script defer src="/static/webapp.js"></script>
+</body>
+<footer class="footer">
+    <div class="footer-content">
+        <span>BugQuest made this for you <3
+            <span id="footer-year"></span>
+        </span>
+        <span>|</span>
+        <span>Powered by Raspberry Pi • FastAPI • BMP280</span>
+        <span>|</span>
+        <span>System status live · <code>/health</code></span>
+    </div>
+</footer>
+
+</html>
